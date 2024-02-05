@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studypal/app_state_providers.dart';
 import 'package:studypal/memeory/save_plan_to_memory.dart';
+import 'package:studypal/models/plan_days.dart';
 import 'package:studypal/widgets/show_plan_widget.dart';
 
 import '../models/study.dart';
@@ -24,7 +25,8 @@ class _ViewPlanListWidgetState extends ConsumerState<ViewPlanListWidget> {
           Plan plan = planListWatch[index];
           return ListTile(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowPlanWidget(),));
+
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPlanWidget(index: index,),));
             },
 
             title: Text(plan.planName),
@@ -41,7 +43,7 @@ class _ViewPlanListWidgetState extends ConsumerState<ViewPlanListWidget> {
                 ),
                 PopupMenuItem<int>(
                   value: 1,
-                  child: Text('Delete'),
+                  child: const Text('Delete'),
                   onTap: ()async {
 
                     // Handle Delete action

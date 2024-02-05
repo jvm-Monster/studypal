@@ -19,7 +19,6 @@ class _CreateNewPlanState extends ConsumerState<CreateNewPlan> {
   TextEditingController planDescriptionController = TextEditingController();
   Plan? plan;
 
-
   bool isReminderEnabled=false;
   bool createPlan = false;
   @override
@@ -29,94 +28,82 @@ class _CreateNewPlanState extends ConsumerState<CreateNewPlan> {
       appBar:const PreferredSize(preferredSize: Size.fromHeight(50), child: AppBarWidget(appBarTitile: "Create new plan")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child:  Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Plan Name:${planNameController.text}'),
-            Text('Plan Description:${planDescriptionController.text}'),
-
-             TextField(
-               controller: planNameController,
-               onChanged:(value) {
-                 setState(() {
-
-                 });
-               },
-
-               decoration: InputDecoration(
-                 labelText: 'Plan name',
-                 labelStyle: const TextStyle(
-                   color: Colors.grey
-                 ),
-                 border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)
-                 )
-               ),
-             ),
-            SizedBox(height: 20,),
-            TextField(
-              onChanged:(value) {
-                  setState(() {
-
-                  });
-              },
-              controller: planDescriptionController,
-              maxLength: 100,
-              maxLines: 3,
-              decoration: InputDecoration(
-                  labelText: 'Plan Description',
-                  labelStyle: const TextStyle(
-                      color: Colors.grey
-                  ),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)
-                  )
-              ),
-            ),
-            SizedBox(height: 20,),
-
-           Row(
-             mainAxisAlignment: MainAxisAlignment.spaceAround,
-             children: [
-               ElevatedButton(onPressed: ()async{
-                 plan=Plan(planName: planNameController.text, planDescription: planDescriptionController.text);
-                 if(plan!=null){
-                   bool success = await SavePlanToMemory.addPlan(plan!);
-                   if(success){
-                     final List<Plan> updatedList = List.from(planListWatch);
-                     updatedList.add(plan!);
-                     ref.read(getPlanListProvider.notifier).update((state) => updatedList);
-                   }
-                 }else{
-                   const SnackBar(content: Text("Could not add plan"));
-                 }
-
-                 setState(() {
-                   createPlan=true;
-                 });
-               }, child: const Text("Create Plan")),
-               Column(
-                 children: [
-                   const Text("Set Reminder"),
-                   Switch(
-                     value: isReminderEnabled,
-                     onChanged: (value) {
-                       setState(() {
-                         isReminderEnabled = value;
-                       });
-                     },
+        child:  Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                 TextField(
+                   controller: planNameController,
+                   decoration: InputDecoration(
+                     labelText: 'Plan name',
+                     labelStyle: const TextStyle(
+                       color: Colors.grey
+                     ),
+                     border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)
+                     )
                    ),
+                 ),
+                const SizedBox(height: 20,),
+          
+                TextField(
+                  controller: planDescriptionController,
+                  maxLength: 100,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                      labelText: 'Plan Description',
+                      labelStyle: const TextStyle(
+                          color: Colors.grey
+                      ),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10)
+                      )
+                  ),
+                ),
+                const SizedBox(height: 20,),
+          
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                 children: [
+                   ElevatedButton(onPressed: (){
+                     addToPlanList(planListWatch);
+                     Navigator.pop(context);
+                     }, child: const Text("Create Plan")),
+                   Column(
+                     children: [
+                       const Text("Set Reminder"),
+                       Switch(
+                         value: isReminderEnabled,
+                         onChanged: (value) {
+                           setState(() {
+                             isReminderEnabled = value;
+                           });
+                         },
+                       ),
+                     ],
+                   )
                  ],
                )
-             ],
-           )
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  addToPlanList(WidgetRef ref){
-
+  void addToPlanList(planListWatch)async{
+    plan=Plan(planName: planNameController.text, planDescription: planDescriptionController.text);
+    if(plan!=null){
+      bool success = await SavePlanToMemory.addPlan(plan:plan!);
+      if(success){
+        final List<Plan> updatedList = List.from(planListWatch);
+        updatedList.add(plan!);
+        ref.read(getPlanListProvider.notifier).update((state) => updatedList);
+      }
+    }else{
+      const SnackBar(content: Text("Could not add plan"));
+    }
   }
 }

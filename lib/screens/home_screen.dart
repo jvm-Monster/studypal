@@ -40,6 +40,7 @@ class _BottomNavigationScreenState extends ConsumerState<BottomNavigationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: screenss[currentIndex],
         floatingActionButton: currentIndex!=0?null:FloatingActionButton(
             shape:  const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(100))),
@@ -55,7 +56,7 @@ class _BottomNavigationScreenState extends ConsumerState<BottomNavigationScreen>
                 currentIndex=value;
               });
             },
-            unselectedItemColor: Color(0xFF9E9E9E),
+            unselectedItemColor: const Color(0xFF9E9E9E),
             type: BottomNavigationBarType.fixed,
             items:const [
 

@@ -31,19 +31,23 @@ class PlanDays{
 
   // Create PlanDays from Map during deserialization
   factory PlanDays.fromMap(Map<String, dynamic> map) {
-    return PlanDays(
-      map['monday'],
-      map['tuesday'],
-      map['wednesday'],
-      map['thursday'],
-      map['friday'],
-      map['saturday'],
-      map['sunday'],
-    );
+    return convert(map);
   }
 
   @override
   String toString() {
     return 'PlanDays{monday: $monday, tuesday: $tuesday, wednesday: $wednesday, thursday: $thursday, friday: $friday, saturday: $saturday, sunday: $sunday}';
+  }
+
+  static PlanDays convert(Map<String,dynamic> map){
+    return PlanDays(
+      (map['monday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      (map['tuesday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      (map['wednesday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      (map['thursday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      (map['friday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      (map['saturday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+      (map['sunday'] as List?)?.cast<Map<String, dynamic>>() ?? [],
+    );
   }
 }
