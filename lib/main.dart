@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:studypal/memeory/save_plan_to_memory.dart';
 import 'package:studypal/memeory/shared_prefrence_services.dart';
 import 'package:studypal/notification_controller.dart';
-import 'package:studypal/screens/home_screen.dart';
+import 'package:studypal/screens/screen_wrapper.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:app_settings/app_settings.dart';
@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
             ),
             brightness: Brightness.dark),
       ),
-      home: const BottomNavigationScreen(),
+      home: const ScreenWrapper(),
     );
   }
 }

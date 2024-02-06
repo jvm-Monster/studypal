@@ -9,16 +9,16 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../models/study.dart';
 
-class AddTaskToPlan extends ConsumerStatefulWidget {
+class AddTaskToPlanScreen extends ConsumerStatefulWidget {
   final int index;
   final String daySelected;
-  const AddTaskToPlan(this.index,this.daySelected, {super.key});
+  const AddTaskToPlanScreen(this.index,this.daySelected, {super.key});
 
   @override
   ConsumerState createState() => _AddTaskToPlanState();
 }
 
-class _AddTaskToPlanState extends ConsumerState<AddTaskToPlan> {
+class _AddTaskToPlanState extends ConsumerState<AddTaskToPlanScreen> {
 
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();

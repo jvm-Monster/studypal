@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studypal/memeory/save_plan_to_memory.dart';
 import 'package:studypal/models/plan_days.dart';
-import 'package:studypal/widgets/add_task_to_plan_widget.dart';
+import 'package:studypal/screens/add_task_to_plan_screen.dart';
+import 'package:studypal/widgets/day_button_widget.dart';
 import 'package:studypal/widgets/random_picker_widget.dart';
 
 import '../app_state_providers.dart';
 import '../models/study.dart';
 
+final selectedDayProvider = StateProvider((ref) => 'Monday');
 class ShowPlanWidget extends ConsumerStatefulWidget {
   final int index;
   const ShowPlanWidget({super.key,required this.index});
@@ -22,9 +24,14 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final watchPlanListProvider = ref.watch(getPlanListProvider);
+
+    final watchPlanListProvider = ref.watch(getPlanListProvider);//list of task in a plan
+    final watchSelectedDay = ref.watch(selectedDayProvider); // watch the selected day user click to show tasks
+
     Plan  plan = watchPlanListProvider[widget.index];
-    print(watchPlanListProvider);
+    void onClickButtonDay(String text){
+      ref.read(selectedDayProvider.notifier).update((state) => text);
+    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -33,7 +40,7 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
           TextButton(
               onPressed: (){
 
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AddTaskToPlan(widget.index,selectedDay),));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddTaskToPlanScreen(widget.index,selectedDay),));
               },
               child: const Text('Add Task')
           )
@@ -62,13 +69,14 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    days("Monday"),
-                    days("Tuesday"),
-                    days("Wednesday"),
-                    days("Thursday"),
-                    days("Friday"),
-                    days("Saturday"),
-                    days("Sunday")
+                    DayButtonWidget(text: "Monday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Tuesday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Wednesday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Thursday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Friday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Saturday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Sunday", doFunction: onClickButtonDay),
+
                   ],),
               ),
             ),

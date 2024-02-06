@@ -11,14 +11,14 @@ import 'package:studypal/screens/settings_screen.dart';
 
 import '../models/study.dart';
 
-class BottomNavigationScreen extends ConsumerStatefulWidget {
-  const BottomNavigationScreen({super.key});
+class ScreenWrapper extends ConsumerStatefulWidget {
+  const ScreenWrapper({super.key});
 
   @override
   ConsumerState createState() => _BottomNavigationScreenState();
 }
 
-class _BottomNavigationScreenState extends ConsumerState<BottomNavigationScreen> {
+class _BottomNavigationScreenState extends ConsumerState<ScreenWrapper> {
 
   void prepareData()async{
     List<Plan> plans = await SavePlanToMemory.getAllPlans();

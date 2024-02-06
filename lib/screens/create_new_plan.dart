@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:studypal/app_state_providers.dart';
 import 'package:studypal/memeory/save_plan_to_memory.dart';
 import 'package:studypal/models/study.dart';
-import 'package:studypal/widgets/add_task_to_plan_widget.dart';
+import 'package:studypal/screens/add_task_to_plan_screen.dart';
 import 'package:studypal/widgets/app_bar_widget.dart';
 
 class CreateNewPlan extends ConsumerStatefulWidget {
