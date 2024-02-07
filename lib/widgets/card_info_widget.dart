@@ -21,16 +21,14 @@ class CardInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: doThis,
-      child: Container(
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(40, 15, 40, 15),
-            child: Column(
-              children: [
-                icon,
-                Text(title),
-              ],
-            ),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
+          child: Column(
+            children: [
+              icon,
+              Text(title),
+            ],
           ),
         ),
       ),

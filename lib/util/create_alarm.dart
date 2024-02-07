@@ -32,6 +32,7 @@ class CreateAlarm{
         body: timeOfDay.format(context),
         // Replace with the actual body text
         category: NotificationCategory.Alarm,
+        customSound: "resource://raw/res_sound.m4a"
       ),
       actionButtons: [
         NotificationActionButton(
@@ -47,6 +48,7 @@ class CreateAlarm{
         minute: scheduledTime.minute,
         second: 0,
         millisecond: 0,
+        repeats: true
       ),
     );
   }

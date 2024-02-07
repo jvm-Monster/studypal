@@ -26,6 +26,7 @@ void main() async{
             channelDescription:  "StudyPal notifications channel",
             playSound: true,
             enableVibration: true,
+            channelShowBadge: true,
 
         )
       ],

@@ -25,8 +25,7 @@ class _ViewPlanListWidgetState extends ConsumerState<ViewPlanListWidget> {
           Plan plan = planListWatch[index];
           return ListTile(
             onTap: () {
-
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPlanWidget(index: index,),));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => ShowPlanWidget(planSelectedIndex: index,),));
             },
 
             title: Text(plan.planName),
