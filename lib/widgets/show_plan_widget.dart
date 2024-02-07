@@ -4,6 +4,7 @@ import 'package:studypal/memeory/save_plan_to_memory.dart';
 import 'package:studypal/models/plan_days.dart';
 import 'package:studypal/screens/add_task_to_plan_screen.dart';
 import 'package:studypal/widgets/day_button_widget.dart';
+import 'package:studypal/widgets/day_task_list_widget.dart';
 import 'package:studypal/widgets/random_picker_widget.dart';
 
 import '../app_state_providers.dart';
@@ -11,27 +12,23 @@ import '../models/study.dart';
 
 final selectedDayProvider = StateProvider((ref) => 'Monday');
 class ShowPlanWidget extends ConsumerStatefulWidget {
-  final int index;
-  const ShowPlanWidget({super.key,required this.index});
+  final int planSelectedIndex;
+  const ShowPlanWidget({super.key,required this.planSelectedIndex});
 
   @override
   ConsumerState createState() => _ShowPlanWidgetState();
 }
 
 class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
-  String selectedDay = 'Monday';
-  String dayToDisplay = 'Monday';
+
 
   @override
   Widget build(BuildContext context) {
 
-    final watchPlanListProvider = ref.watch(getPlanListProvider);//list of task in a plan
-    final watchSelectedDay = ref.watch(selectedDayProvider); // watch the selected day user click to show tasks
+    final plans = ref.watch(getPlanListProvider);//list of task in a plan
+    final selectedDay = ref.watch(selectedDayProvider); // watch the selected day user click to show tasks
+    Plan  plan = plans[widget.planSelectedIndex];
 
-    Plan  plan = watchPlanListProvider[widget.index];
-    void onClickButtonDay(String text){
-      ref.read(selectedDayProvider.notifier).update((state) => text);
-    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -39,68 +36,60 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
         actions: [
           TextButton(
               onPressed: (){
-
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AddTaskToPlanScreen(widget.index,selectedDay),));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AddTaskToPlanScreen(widget.planSelectedIndex,selectedDay),));
               },
               child: const Text('Add Task')
           )
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(plan.planName,style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
+              child: Text(plan.planName,style: const TextStyle(fontSize: 25,fontWeight: FontWeight.bold),),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Container(
               decoration: BoxDecoration(
-                  color: Color(0xff0088FF).withOpacity(0.05),
+                  color: const Color(0xff0088FF).withOpacity(0.05),
                   borderRadius: BorderRadius.circular(10)
               ),
       
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
+              child: const Padding(
+                padding:EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    DayButtonWidget(text: "Monday", doFunction: onClickButtonDay),
-                    DayButtonWidget(text: "Tuesday", doFunction: onClickButtonDay),
-                    DayButtonWidget(text: "Wednesday", doFunction: onClickButtonDay),
-                    DayButtonWidget(text: "Thursday", doFunction: onClickButtonDay),
-                    DayButtonWidget(text: "Friday", doFunction: onClickButtonDay),
-                    DayButtonWidget(text: "Saturday", doFunction: onClickButtonDay),
-                    DayButtonWidget(text: "Sunday", doFunction: onClickButtonDay),
+                    DayButtonWidget(text: "Monday"),
+                    DayButtonWidget(text: "Tuesday"),
+                    DayButtonWidget(text: "Wednesday"),
+                    DayButtonWidget(text: "Thursday"),
+                    DayButtonWidget(text: "Friday"),
+                    DayButtonWidget(text: "Saturday"),
+                    DayButtonWidget(text: "Sunday"),
 
                   ],),
               ),
             ),
       
             const SizedBox(height: 20,),
-
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(selectedDay, style: const TextStyle(fontWeight: FontWeight.bold,fontSize:20)),
-
+                    Text(selectedDay, style: const TextStyle(fontWeight: FontWeight.bold,fontSize:25)),
                     const SizedBox(height: 10,),
-                   /* taskWidget(Colors.red, "Go To The Market Tomorrow","11:05 - 11:40" ),
-                    taskWidget(Colors.blue, "Eat My Food", "10:20 - 10:30"),
-                    taskWidget(Colors.purpleAccent, "Drink Water", "11:05 - 11:40"),
-                    taskWidget(Colors.green, "Go To The Market Tomorrow","11:05 - 11:40" ),
-                    taskWidget(Colors.yellow, "Go To The Market Tomorrow","11:05 - 11:40" )
-*/
-                     SizedBox(
+                    SizedBox(
                        height: MediaQuery.of(context).size.height*0.55,
-                       child: listTasks(plan),
+                       width: MediaQuery.of(context).size.width,
+                       child: DayTasks(plan: plan, planSelectedIndex: widget.planSelectedIndex, selectedDay: selectedDay)
                      )
                   ],
                 ),
@@ -113,8 +102,8 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
     );
   }
 
-  listTasks(Plan plan){
-    List<Map<String,dynamic>> day = checkSelectedDay(plan);
+  listTasks(Plan plan,String selectedDay){
+    List<Map<String,dynamic>> day = checkSelectedDay(plan,selectedDay);
     return ListView.builder(
       itemCount: day.length,
       itemBuilder: (context, index) {
@@ -137,7 +126,7 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
             ),
             onDismissed: (direction) async{
 
-              bool success = await SavePlanToMemory.removeATask(widget.index, selectedDay, index);
+              bool success = await SavePlanToMemory.removeATask(widget.planSelectedIndex, selectedDay, index);
               if(success){
                 day.removeAt(index);
               }else{
@@ -152,7 +141,7 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
     },);
   }
 
-  List<Map<String,dynamic>> checkSelectedDay(Plan plan){
+  List<Map<String,dynamic>> checkSelectedDay(Plan plan,String selectedDay){
     PlanDays? planDays = plan.planDays;
     List<Map<String,dynamic>> planDayPlans = [];
     if(planDays==null){
@@ -175,7 +164,7 @@ class _ShowPlanWidgetState extends ConsumerState<ShowPlanWidget> {
 
 
 
-  Widget days(String text){
+  Widget days(String text,String selectedDay){
     return GestureDetector(
       onTap: () {
         setState(() {

@@ -7,57 +7,67 @@ import 'package:studypal/widgets/task_view_design_widget.dart';
 import '../memeory/save_plan_to_memory.dart';
 import '../models/plan_days.dart';
 import '../models/study.dart';
-
-class DayTaskList extends StatelessWidget {
-  List<Map<String,dynamic>> particularDayTasks=[];
+class DayTasks extends ConsumerStatefulWidget {
   final Plan plan;
   final String selectedDay;
   final int planSelectedIndex;
-  DayTaskList({super.key,required this.plan,required this.planSelectedIndex,required this.selectedDay});
+  DayTasks({super.key,required this.plan,required this.planSelectedIndex,required this.selectedDay});
+
 
   @override
+  ConsumerState createState() => _DayTasksState();
+}
+
+class _DayTasksState extends ConsumerState<DayTasks> {
+  List<Map<String,dynamic>> particularDayTasks=[];
+  @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        particularDayTasks=checkSelectedDay(plan);
-        return ListView.builder(
-          itemCount: particularDayTasks.length,
-          itemBuilder: (context, index) {
-            if(particularDayTasks.isEmpty){
-              return const Text("No task for this day");
-            }
-            else{
-              Map<String,dynamic> task = particularDayTasks[index];
+    particularDayTasks=checkSelectedDay(widget.plan);
+    final val = ref.watch(getPlanListProvider);
+    if(particularDayTasks.isEmpty){
+      return const Text("No task for this day");
+    }
+    return ListView.builder(
+      itemCount: particularDayTasks.length,
+      itemBuilder: (context, index) {
+        if(particularDayTasks.isEmpty){
+          return const Text("No task for this day");
+        }
+        else{
+          Map<String,dynamic> task = particularDayTasks[index];
 
-              return  Dismissible(
-                  key: UniqueKey(),
-                  background: Container(
-                    color: Colors.grey,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 0),
-                    child: const Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                  ),
-                  onDismissed: (direction) async{
+          return  Dismissible(
+              key: UniqueKey(),
+              background: Container(
+                color: Colors.grey,
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.only(right: 0),
+                child: const Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
+              ),
+              onDismissed: (direction) async{
 
-                    bool success = await SavePlanToMemory.removeATask(planSelectedIndex, selectedDay, index);
-                    if(success){
-                      particularDayTasks.removeAt(index);
-                      ref.refresh(getPlanListProvider.notifier);
-                    }else{
-                      print('it never removed');
-                    }
+                bool success = await SavePlanToMemory.removeATask(widget.planSelectedIndex, widget.selectedDay, index);
+                if(success){
+                  particularDayTasks.removeAt(index);
 
-                  },
-                  child: TaskViewDesignWidget(task: task['task'], time: task['time']));
-            }
-          },);
-      },
-    
-    );
+                }else{
+                  print('it never removed');
+                }
+                //I tried using ref to update the state, but i can't think, so the simplest way
+                //is to call setstate to just rebuild the widget.
+                setState(() {
+
+                });
+              },
+              child: TaskViewDesignWidget(task: task['task'], time: task['time']));
+        }
+      },);
   }
+
+
 
   List<Map<String,dynamic>> checkSelectedDay(Plan plan){
     PlanDays? planDays = plan.planDays;
@@ -66,7 +76,7 @@ class DayTaskList extends StatelessWidget {
       return [];
     }
     else{
-      switch(selectedDay){
+      switch(widget.selectedDay){
         case 'Monday' : planDayPlans=planDays.monday;break;
         case 'Tuesday' : planDayPlans=planDays.tuesday;break;
         case 'Wednesday' : planDayPlans=planDays.wednesday;break;
@@ -79,5 +89,7 @@ class DayTaskList extends StatelessWidget {
     }
 
   }
-  
+
 }
+
+
